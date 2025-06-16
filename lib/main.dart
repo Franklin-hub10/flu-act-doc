@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_actividad_autonoma/screens/pantalla1Screen.dart';
-import 'package:flutter_application_actividad_autonoma/screens/pantalla2Screen.dart';
-import 'package:flutter_application_actividad_autonoma/screens/pantalla3Screen.dart';
+import 'screens/pantalla1Screen.dart';
+import 'screens/pantalla2Screen.dart';
+import 'screens/pantalla3Screen.dart';
 
-
-void main() {
-  runApp(EjerciciosApp());
-}
+void main() => runApp(const EjerciciosApp());
 
 class EjerciciosApp extends StatelessWidget {
   const EjerciciosApp({super.key});
@@ -14,8 +11,9 @@ class EjerciciosApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      debugShowCheckedModeBanner: true,
-      home: Cuerpo());
+      debugShowCheckedModeBanner: false,
+      home: Cuerpo(),
+    );
   }
 }
 
@@ -25,37 +23,27 @@ class Cuerpo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Ejercicios")),
-      body: Column(
-        children: [
-          btnEjercicio1(context),
-          btnEjercicio2(context)
-
-        
-        ],
+      appBar: AppBar(title: const Text('Ejercicios con Stack')),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _navButton(context, 'Ejercicio 10', const Pantalla1()),
+            const SizedBox(height: 12),
+            _navButton(context, 'Ejercicio 11', const Pantalla2()),
+            const SizedBox(height: 12),
+            _navButton(context, 'Ejercicio 12', const Pantalla3()),
+          ],
+        ),
       ),
     );
   }
-}
 
-Widget btnEjercicio1(context) {
-  return FilledButton(
-    onPressed: () => Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => Pantalla1()),
-    ),
-    child: Text("Pantalla 1"),
-    style: ButtonStyle(
-      backgroundColor: WidgetStatePropertyAll(Color.fromRGBO(173, 20, 20, 0.5)),
-    ),
-  );
-}
-
-
-Widget btnEjercicio2(context){
-return
-ElevatedButton( 
-  onPressed: () => 
-  Navigator.push(context, MaterialPageRoute(builder: (context) => Pantalla2())),
-  child: Text("Pantalla 2"),);
+  Widget _navButton(BuildContext context, String texto, Widget pantalla) {
+    return ElevatedButton(
+      onPressed: () =>
+          Navigator.push(context, MaterialPageRoute(builder: (_) => pantalla)),
+      child: Text(texto),
+    );
+  }
 }
