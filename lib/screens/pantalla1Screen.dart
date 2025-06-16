@@ -9,46 +9,43 @@ class Pantalla1 extends StatefulWidget {
 
 class _Pantalla1State extends State<Pantalla1> {
   final _edadCtrl = TextEditingController();
-  final _promedioCtrl = TextEditingController();
-  String _nivelIngles = 'Básico';
-
-  void _evaluar() {
-    final edad = int.tryParse(_edadCtrl.text) ?? 0;
-    final promedio = double.tryParse(_promedioCtrl.text) ?? 0;
-    final inglesOk =
-        _nivelIngles == 'Intermedio' || _nivelIngles == 'Avanzado';
-
-    final esApto =
-        (edad >= 16 && edad <= 25 && inglesOk && promedio >= 8);
-
-    _mostrarDialogo(
-      esApto
-          ? 'El estudiante es apto para participar en el programa de intercambio'
-          : 'Lo siento, el estudiante no cumple con los requisitos para el programa de intercambio',
-    );
-  }
-
-  void _mostrarDialogo(String mensaje) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Resultado'),
-        content: Text(mensaje),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cerrar'),
-          ),
-        ],
-      ),
-    );
-  }
+  final _promCtrl = TextEditingController();
+  String _ingles = 'Básico';
 
   @override
   void dispose() {
     _edadCtrl.dispose();
-    _promedioCtrl.dispose();
+    _promCtrl.dispose();
     super.dispose();
+  }
+
+  void _eval() {
+    final edad = int.tryParse(_edadCtrl.text) ?? 0;
+    final prom = double.tryParse(_promCtrl.text) ?? 0;
+    final okIngl = _ingles == 'Intermedio' || _ingles == 'Avanzado';
+
+    _alert(
+      (edad >= 16 && edad <= 25 && okIngl && prom >= 8)
+          ? 'El estudiante es apto para el intercambio'
+          : 'No cumple los requisitos para el intercambio',
+    );
+  }
+
+  void _alert(String msg) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: Colors.black,
+        title: const Text('Resultado',
+            style: TextStyle(color: Colors.white)),
+        content: Text(msg, style: const TextStyle(color: Colors.white)),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cerrar'))
+        ],
+      ),
+    );
   }
 
   @override
@@ -61,41 +58,25 @@ class _Pantalla1State extends State<Pantalla1> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                TextField(
-                  controller: _edadCtrl,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Edad',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
+                _campo(_edadCtrl, 'Edad', entero: true),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
-                  value: _nivelIngles,
+                  value: _ingles,
+                  dropdownColor: Colors.black,
+                  decoration:
+                      const InputDecoration(labelText: 'Nivel de inglés'),
                   items: const [
                     DropdownMenuItem(value: 'Básico', child: Text('Básico')),
                     DropdownMenuItem(
                         value: 'Intermedio', child: Text('Intermedio')),
-                    DropdownMenuItem(
-                        value: 'Avanzado', child: Text('Avanzado')),
+                    DropdownMenuItem(value: 'Avanzado', child: Text('Avanzado')),
                   ],
-                  onChanged: (v) => setState(() => _nivelIngles = v!),
-                  decoration: const InputDecoration(
-                    labelText: 'Nivel de inglés',
-                    border: OutlineInputBorder(),
-                  ),
+                  onChanged: (v) => setState(() => _ingles = v!),
                 ),
                 const SizedBox(height: 12),
-                TextField(
-                  controller: _promedioCtrl,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Promedio de calificaciones',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
+                _campo(_promCtrl, 'Promedio', decimales: true),
                 const SizedBox(height: 20),
-                ElevatedButton(onPressed: _evaluar, child: const Text('Evaluar')),
+                ElevatedButton(onPressed: _eval, child: const Text('Evaluar')),
               ],
             ),
           ),
@@ -103,4 +84,14 @@ class _Pantalla1State extends State<Pantalla1> {
       ),
     );
   }
+
+  TextField _campo(TextEditingController c, String l,
+          {bool entero = false, bool decimales = false}) =>
+      TextField(
+        controller: c,
+        keyboardType: TextInputType.numberWithOptions(
+            decimal: decimales, signed: false),
+        decoration: InputDecoration(labelText: l),
+        style: const TextStyle(color: Colors.white),
+      );
 }

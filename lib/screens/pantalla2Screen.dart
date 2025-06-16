@@ -8,43 +8,40 @@ class Pantalla2 extends StatefulWidget {
 }
 
 class _Pantalla2State extends State<Pantalla2> {
-  final _promedioCtrl = TextEditingController();
-  final _ingresoCtrl = TextEditingController();
-
-  void _evaluar() {
-    final promedio = double.tryParse(_promedioCtrl.text) ?? 0;
-    final ingreso = double.tryParse(_ingresoCtrl.text) ?? 0;
-
-    final esApto = (promedio >= 9 && ingreso < 3000);
-
-    _mostrarDialogo(
-      esApto
-          ? 'El estudiante es elegible para la beca'
-          : 'Lo siento, el estudiante no es elegible para la beca',
-    );
-  }
-
-  void _mostrarDialogo(String mensaje) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Resultado'),
-        content: Text(mensaje),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cerrar'),
-          ),
-        ],
-      ),
-    );
-  }
+  final _promCtrl = TextEditingController();
+  final _ingrCtrl = TextEditingController();
 
   @override
   void dispose() {
-    _promedioCtrl.dispose();
-    _ingresoCtrl.dispose();
+    _promCtrl.dispose();
+    _ingrCtrl.dispose();
     super.dispose();
+  }
+
+  void _eval() {
+    final prom = double.tryParse(_promCtrl.text) ?? 0;
+    final ing = double.tryParse(_ingrCtrl.text) ?? 0;
+
+    _alert((prom >= 9 && ing < 3000)
+        ? 'Estudiante elegible para la beca'
+        : 'No cumple los requisitos para la beca');
+  }
+
+  void _alert(String msg) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: Colors.black,
+        title:
+            const Text('Resultado', style: TextStyle(color: Colors.white)),
+        content: Text(msg, style: const TextStyle(color: Colors.white)),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cerrar'))
+        ],
+      ),
+    );
   }
 
   @override
@@ -57,25 +54,11 @@ class _Pantalla2State extends State<Pantalla2> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                TextField(
-                  controller: _promedioCtrl,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Promedio de calificaciones',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
+                _campo(_promCtrl, 'Promedio', decimales: true),
                 const SizedBox(height: 12),
-                TextField(
-                  controller: _ingresoCtrl,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Ingreso mensual familiar (\$)',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
+                _campo(_ingrCtrl, 'Ingreso familiar (\$)', decimales: true),
                 const SizedBox(height: 20),
-                ElevatedButton(onPressed: _evaluar, child: const Text('Evaluar')),
+                ElevatedButton(onPressed: _eval, child: const Text('Evaluar')),
               ],
             ),
           ),
@@ -83,4 +66,14 @@ class _Pantalla2State extends State<Pantalla2> {
       ),
     );
   }
+
+  TextField _campo(TextEditingController c, String l,
+          {bool decimales = false}) =>
+      TextField(
+        controller: c,
+        keyboardType:
+            TextInputType.numberWithOptions(decimal: decimales, signed: false),
+        decoration: InputDecoration(labelText: l),
+        style: const TextStyle(color: Colors.white),
+      );
 }

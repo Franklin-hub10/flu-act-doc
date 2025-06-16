@@ -9,42 +9,39 @@ class Pantalla3 extends StatefulWidget {
 
 class _Pantalla3State extends State<Pantalla3> {
   final _edadCtrl = TextEditingController();
-  final _experienciaCtrl = TextEditingController();
-
-  void _evaluar() {
-    final edad = int.tryParse(_edadCtrl.text) ?? 0;
-    final experiencia = int.tryParse(_experienciaCtrl.text) ?? 0;
-
-    final esApto = (edad >= 25 && edad <= 35 && experiencia >= 3);
-
-    _mostrarDialogo(
-      esApto
-          ? 'El aspirante puede ser seleccionado para una entrevista'
-          : 'Lo siento, el aspirante no cumple con los requisitos para la entrevista',
-    );
-  }
-
-  void _mostrarDialogo(String mensaje) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Resultado'),
-        content: Text(mensaje),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cerrar'),
-          ),
-        ],
-      ),
-    );
-  }
+  final _expCtrl = TextEditingController();
 
   @override
   void dispose() {
     _edadCtrl.dispose();
-    _experienciaCtrl.dispose();
+    _expCtrl.dispose();
     super.dispose();
+  }
+
+  void _eval() {
+    final edad = int.tryParse(_edadCtrl.text) ?? 0;
+    final exp = int.tryParse(_expCtrl.text) ?? 0;
+
+    _alert((edad >= 25 && edad <= 35 && exp >= 3)
+        ? 'Aspirante apto para entrevista'
+        : 'No cumple los requisitos para la entrevista');
+  }
+
+  void _alert(String msg) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: Colors.black,
+        title:
+            const Text('Resultado', style: TextStyle(color: Colors.white)),
+        content: Text(msg, style: const TextStyle(color: Colors.white)),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cerrar'))
+        ],
+      ),
+    );
   }
 
   @override
@@ -57,25 +54,11 @@ class _Pantalla3State extends State<Pantalla3> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                TextField(
-                  controller: _edadCtrl,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Edad',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
+                _campo(_edadCtrl, 'Edad', entero: true),
                 const SizedBox(height: 12),
-                TextField(
-                  controller: _experienciaCtrl,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Años de experiencia laboral',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
+                _campo(_expCtrl, 'Años de experiencia', entero: true),
                 const SizedBox(height: 20),
-                ElevatedButton(onPressed: _evaluar, child: const Text('Evaluar')),
+                ElevatedButton(onPressed: _eval, child: const Text('Evaluar')),
               ],
             ),
           ),
@@ -83,4 +66,14 @@ class _Pantalla3State extends State<Pantalla3> {
       ),
     );
   }
+
+  TextField _campo(TextEditingController c, String l,
+          {bool entero = false}) =>
+      TextField(
+        controller: c,
+        keyboardType:
+            TextInputType.numberWithOptions(decimal: !entero, signed: false),
+        decoration: InputDecoration(labelText: l),
+        style: const TextStyle(color: Colors.white),
+      );
 }
